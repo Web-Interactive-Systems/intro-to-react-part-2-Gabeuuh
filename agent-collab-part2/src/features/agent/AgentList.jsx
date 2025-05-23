@@ -1,9 +1,9 @@
 import { useStore } from '@nanostores/react'
-import { $agents, removeAgent } from '@/store/agents'
+import { $agents } from '@/store/agents'
 import { Pencil1Icon, TrashIcon } from '@radix-ui/react-icons'
 import { Card, Flex, Button } from '@radix-ui/themes'
 
-function AgentList({ onEdit, selectedAgent }) {
+function AgentList({ onEdit, onDelete, onSelect, selectedAgent }) {
   const agents = useStore($agents)
 
   return (
@@ -11,12 +11,14 @@ function AgentList({ onEdit, selectedAgent }) {
       {agents.map(agent => (
         <Card
           key={agent.id}
+          onClick={() => onSelect(agent.id)}
           style={{
             background: selectedAgent === agent.id ? 'var(--focus-7)' : '',
             padding: 16,
             display: 'flex',
             alignItems: 'center',
             gap: 12,
+            cursor: 'pointer'
           }}
         >
           <span style={{ fontSize: 28 }}>{agent.emoji}</span>
@@ -26,7 +28,10 @@ function AgentList({ onEdit, selectedAgent }) {
           </div>
           <Button
             variant="ghost"
-            onClick={() => onEdit(agent)}
+            onClick={(e) => {
+              e.stopPropagation()
+              onEdit(agent)
+            }}
             color={'blue'}
           >
             <Pencil1Icon />
@@ -34,7 +39,10 @@ function AgentList({ onEdit, selectedAgent }) {
           <Button
             variant="ghost"
             color="red"
-            onClick={() => removeAgent(agent.id)}
+            onClick={(e) => {
+              e.stopPropagation()
+              onDelete(agent.id)
+            }}
           >
             <TrashIcon />
           </Button>
